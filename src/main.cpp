@@ -1,14 +1,18 @@
 #include "raylib.h"
 
+#define WIDTH 980
+#define HEIGHT 720
+
 int main(void)
 {
-    InitWindow(800, 450, "raylib [core] example - basic window");
+    InitWindow(WIDTH, HEIGHT, "Creating a line first");
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+            ClearBackground(BLACK);
+            DrawLine(0,0,WIDTH,HEIGHT,WHITE);
+            DrawLine(0,HEIGHT,WIDTH,0,WHITE);
         EndDrawing();
     }
 
