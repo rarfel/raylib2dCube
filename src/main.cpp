@@ -5,23 +5,18 @@
 
 int main(void)
 {
-    InitWindow(WIDTH, HEIGHT, "Creating a triangle");
-
-    Vector2 v1 = {100,100};
-    Vector2 v2 = {100,200};
-    Vector2 v3 = {150,150};
+    const int squareSize = 1;
+    InitWindow(WIDTH, HEIGHT, "Creating colored grid");
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
-            ClearBackground(BLACK);
-            //the DrawTriangle function creates a solid triangle
-            // DrawTriangle(v1, v2, v3, WHITE);
-
-            //If i want only the outline a have to use DrawLine 3 times
-            DrawLine(v1.x, v1.y, v2.x, v2.y, WHITE);
-            DrawLine(v2.x, v2.y, v3.x, v3.y, WHITE);
-            DrawLine(v3.x, v3.y, v1.x, v1.y, WHITE);
+        ClearBackground(BLACK);
+        for(int i = 0; i < WIDTH; i++)
+            for(int j = 0; j < HEIGHT; j++)
+                //The rgba values are stored in unsigned char, so converting is a must
+                DrawRectangle(i*squareSize, j*squareSize, squareSize, squareSize, {(unsigned char)(int((i*squareSize)/(3.85))%255), (unsigned char)(int((j*squareSize)/(2.85))%255), 0, 255});
+            
         EndDrawing();
     }
 
