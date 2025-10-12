@@ -1,6 +1,20 @@
 #include <iostream>
 #include <cmath>
 
+#define WIDTH 980
+#define HEIGHT 720
+
+#define HALF_WIDTH WIDTH/2
+#define HALF_HEIGHT HEIGHT/2
+
+// A face is defined by 3 vertices
+struct Face
+{
+    Vector3 vec1;
+    Vector3 vec2;
+    Vector3 vec3;
+};
+
 // dx = cosy(sinzY + coszX) - sinyZ
 float RotateXAxis(Vector3 vec, float angleBeta, float angleGamma)
 {
@@ -41,41 +55,58 @@ float RotateZAxis(Vector3 vec, float angleAlpha, float angleBeta, float angleGam
     return cosAlpha * (cosBeta * vec.z + sinBeta * (sinGamma * vec.y + cosGamma * vec.x)) - sinAlpha * (cosGamma * vec.y - sinGamma * vec.x);
 }
 
-// Rotates the points in all axis
-Vector3 RotateXYZAxis(Vector3 vec, float angleAlpha, float angleBeta, float angleGamma)
-{
-    Vector3 nVec;
-
-    nVec.x = RotateXAxis(vec,angleBeta,angleGamma);
-    nVec.y = RotateYAxis(vec,angleAlpha,angleBeta,angleGamma);
-    nVec.z = RotateZAxis(vec,angleAlpha,angleBeta,angleGamma);
-
-    return nVec;
-}
-
 // projected = (x or y) * fov / z + fov
-Vector3 ProjectedCoordinates(Vector3 vec, float fov)
+Face ProjectedCoordinates(Face face, float fov)
 {
-    Vector3 projected;
+    Face projectedFace;
+    //subtracting the result from half the screen width/Height to centralize object
 
-    projected.x = (vec.x * fov) / (vec.z + fov);
-    projected.y = (vec.y * fov) / (vec.z + fov);
-    projected.z = vec.z;
+    projectedFace.vec1.x = HALF_WIDTH - ((face.vec1.x * fov) / (face.vec1.z + fov));
+    projectedFace.vec2.x = HALF_WIDTH - ((face.vec2.x * fov) / (face.vec2.z + fov));
+    projectedFace.vec3.x = HALF_WIDTH - ((face.vec3.x * fov) / (face.vec3.z + fov));
 
-    return projected;
+    projectedFace.vec1.y = HALF_HEIGHT - ((face.vec1.y * fov) / (face.vec1.z + fov));
+    projectedFace.vec2.y = HALF_HEIGHT - ((face.vec2.y * fov) / (face.vec2.z + fov));
+    projectedFace.vec3.y = HALF_HEIGHT - ((face.vec3.y * fov) / (face.vec3.z + fov));
+
+    projectedFace.vec1.z = face.vec1.z;
+    projectedFace.vec2.z = face.vec2.z;
+    projectedFace.vec3.z = face.vec3.z;
+
+    return projectedFace;
 }
 
-// function that draws a tringle with tiny circles on the edges
-void DrawTriangleHollow(Vector3 v1, Vector3 v2, Vector3 v3, bool withCircles, Color color)
+// Rotates the points in all axis using the mathematical formula: https://en.wikipedia.org/wiki/3D_projection#Mathematical_formula
+Face RotateXYZAxis(Face face, float angleAlpha, float angleBeta, float angleGamma, float fov)
+{
+    Face nFace;
+
+    nFace.vec1.x = RotateXAxis(face.vec1,angleBeta,angleGamma);
+    nFace.vec2.x = RotateXAxis(face.vec2,angleBeta,angleGamma);
+    nFace.vec3.x = RotateXAxis(face.vec3,angleBeta,angleGamma);
+
+    nFace.vec1.y = RotateYAxis(face.vec1,angleAlpha,angleBeta,angleGamma);
+    nFace.vec2.y = RotateYAxis(face.vec2,angleAlpha,angleBeta,angleGamma);
+    nFace.vec3.y = RotateYAxis(face.vec3,angleAlpha,angleBeta,angleGamma);
+
+    nFace.vec1.z = RotateZAxis(face.vec1,angleAlpha,angleBeta,angleGamma);
+    nFace.vec2.z = RotateZAxis(face.vec2,angleAlpha,angleBeta,angleGamma);
+    nFace.vec3.z = RotateZAxis(face.vec3,angleAlpha,angleBeta,angleGamma);
+
+    return ProjectedCoordinates(nFace, fov);
+}
+
+// function that draws the face of a 3d object
+void DrawFace(Face face, bool withCircles, Color color)
 {
     if(withCircles)
     {
         int circleSize = 5;
-        DrawCircle(v1.x, v1.y, circleSize, color);
-        DrawCircle(v2.x, v2.y, circleSize, color);
-        DrawCircle(v3.x, v3.y, circleSize, color);
+        DrawCircle(face.vec1.x, face.vec1.y, circleSize, color);
+        DrawCircle(face.vec2.x, face.vec2.y, circleSize, color);
+        DrawCircle(face.vec3.x, face.vec3.y, circleSize, color);
     }
-    DrawLine(v1.x, v1.y, v2.x, v2.y, color);
-    DrawLine(v2.x, v2.y, v3.x, v3.y, color);
-    DrawLine(v3.x, v3.y, v1.x, v1.y, color);
+    DrawLine(face.vec1.x, face.vec1.y, face.vec2.x, face.vec2.y, color);
+    DrawLine(face.vec2.x, face.vec2.y, face.vec3.x, face.vec3.y, color);
+    DrawLine(face.vec3.x, face.vec3.y, face.vec1.x, face.vec1.y, color);
 }
