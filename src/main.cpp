@@ -30,6 +30,8 @@ int main(void)
 
     int fov = 100;
 
+    bool withCircles = false;
+
     float angleAlpha = 0;
     float angleBeta = 0;
     float angleGamma = 0;
@@ -44,6 +46,8 @@ int main(void)
         if(IsKeyDown(KEY_FIVE)) {angleBeta -= 0.005;}
         if(IsKeyDown(KEY_SIX)) {angleGamma -= 0.005;}
 
+        if(IsKeyPressed(KEY_SPACE)){withCircles = (withCircles) ? false : true;}
+
         BeginDrawing();
         
         nv1 = RotateXYZAxis({x1,y1,z1},angleAlpha,angleBeta,angleGamma);
@@ -55,7 +59,7 @@ int main(void)
         v3 = ProjectedCoordinates(nv3,fov);
 
         ClearBackground(BLACK);
-        DrawTriangleHollow(v1, v2, v3, true, PURPLE);
+        DrawTriangleHollow(v1, v2, v3, withCircles, PURPLE);
         EndDrawing();
     }
 
