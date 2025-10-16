@@ -26,6 +26,27 @@ size_t SplitStrings(const std::string &txt, std::vector<std::string> &strs, char
     return strs.size();
 }
 
+void CheckVertices(std::string iter, std::vector<Vector3> &verticesOBJ)
+{
+    const int verticesCounter = 3;
+    float vertices[verticesCounter];
+    int index = 0;
+
+    if(iter.at(0) != 'v')
+    {
+        if(index < verticesCounter)
+        {
+            vertices[index] = std::stof(iter);
+            index++;
+        }
+        if(index == verticesCounter)
+        {
+            verticesOBJ.push_back({vertices[0], vertices[1], vertices[2]});
+            index = 0;
+        }
+    }
+}
+
 // function that gets a .obj file and extracts its vertices and faces
 std::vector<Vector3> ReadOBJFile(std::string filepath)
 {
@@ -34,7 +55,9 @@ std::vector<Vector3> ReadOBJFile(std::string filepath)
     std::vector<Vector3> verticesOBJ;
     const int verticesCounter = 3;
     float vertices[verticesCounter];
+    int faces[verticesCounter];
     int index = 0;
+    const int asciiConversion = 48;
 
     // Read from the text file
     std::ifstream readFile(filepath);
@@ -45,8 +68,8 @@ std::vector<Vector3> ReadOBJFile(std::string filepath)
         // Identifying if its reading the vertices
         if(fileContent[0] == 'v' and fileContent[1] == ' ')
         {
-            for(auto iter : variables)
-                if(iter[0] != 'v')
+            for(std::string iter : variables)
+                if(iter.at(0) != 'v')
                 {
                     if(index < verticesCounter)
                     {
@@ -61,11 +84,28 @@ std::vector<Vector3> ReadOBJFile(std::string filepath)
                 }
 
         }
+        index = 0;
         // Identifying if its reading the faces
         if(fileContent[0] == 'f')
         {
-            for(auto iter : variables)
-                std::cout << iter << std::endl;
+            for(std::string iter : variables)
+                if(iter.at(0) != 'f')
+                {
+
+                    if(index < verticesCounter)
+                    {
+                        /* removing 48 from the result because ascii puts 48 as the code of 0.
+                        the ascii table: https://en.wikipedia.org/wiki/ASCII#Printable_character_table */
+                        faces[index] = int(iter.at(0)) - asciiConversion;
+                        index++;
+                    }
+                    if(index == verticesCounter)
+                    {
+                        std::cout << "[ " << faces[0] << ", " << faces[1] << ", " << faces[2] << " ]" << std::endl;
+                        index = 0;
+                    }
+                    std::cout << iter << std::endl;
+                }
         }
     }
 

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <cmath>
 
 #define WIDTH 980
@@ -109,8 +108,6 @@ void DrawFace(Face face, bool withCircles, bool solidTriangles, Color color)
     if(solidTriangles)
     {
         DrawTriangle({face.vec1.x, face.vec1.y}, {face.vec2.x, face.vec2.y}, {face.vec3.x, face.vec3.y}, color);
-        // DrawTriangle({face.vec3.x, face.vec3.y}, {face.vec2.x, face.vec2.y}, {face.vec1.x, face.vec1.y}, color);
-
     }else
     {
         DrawLine(face.vec1.x, face.vec1.y, face.vec2.x, face.vec2.y, color);

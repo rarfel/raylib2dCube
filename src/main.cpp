@@ -11,14 +11,14 @@ int main(void)
     //taking values mannually from cube.obj for now
     float scaler = 100;
     verticesOBJ = ReadOBJFile("res/cube.obj");
-    Vector3 v0 = {(verticesOBJ[0].x * scaler),(verticesOBJ[0].y * scaler),(verticesOBJ[0].z * scaler)};
-    Vector3 v1 = {(verticesOBJ[1].x * scaler),(verticesOBJ[1].y * scaler),(verticesOBJ[1].z * scaler)};
-    Vector3 v2 = {(verticesOBJ[2].x * scaler),(verticesOBJ[2].y * scaler),(verticesOBJ[2].z * scaler)};
-    Vector3 v3 = {(verticesOBJ[3].x * scaler),(verticesOBJ[3].y * scaler),(verticesOBJ[3].z * scaler)};
-    Vector3 v4 = {(verticesOBJ[4].x * scaler),(verticesOBJ[4].y * scaler),(verticesOBJ[4].z * scaler)};
-    Vector3 v5 = {(verticesOBJ[5].x * scaler),(verticesOBJ[5].y * scaler),(verticesOBJ[5].z * scaler)};
-    Vector3 v6 = {(verticesOBJ[6].x * scaler),(verticesOBJ[6].y * scaler),(verticesOBJ[6].z * scaler)};
-    Vector3 v7 = {(verticesOBJ[7].x * scaler),(verticesOBJ[7].y * scaler),(verticesOBJ[7].z * scaler)};
+    Vector3 v0 = {(verticesOBJ.at(0).x * scaler),(verticesOBJ.at(0).y * scaler),(verticesOBJ.at(0).z * scaler)};
+    Vector3 v1 = {(verticesOBJ.at(1).x * scaler),(verticesOBJ.at(1).y * scaler),(verticesOBJ.at(1).z * scaler)};
+    Vector3 v2 = {(verticesOBJ.at(2).x * scaler),(verticesOBJ.at(2).y * scaler),(verticesOBJ.at(2).z * scaler)};
+    Vector3 v3 = {(verticesOBJ.at(3).x * scaler),(verticesOBJ.at(3).y * scaler),(verticesOBJ.at(3).z * scaler)};
+    Vector3 v4 = {(verticesOBJ.at(4).x * scaler),(verticesOBJ.at(4).y * scaler),(verticesOBJ.at(4).z * scaler)};
+    Vector3 v5 = {(verticesOBJ.at(5).x * scaler),(verticesOBJ.at(5).y * scaler),(verticesOBJ.at(5).z * scaler)};
+    Vector3 v6 = {(verticesOBJ.at(6).x * scaler),(verticesOBJ.at(6).y * scaler),(verticesOBJ.at(6).z * scaler)};
+    Vector3 v7 = {(verticesOBJ.at(7).x * scaler),(verticesOBJ.at(7).y * scaler),(verticesOBJ.at(7).z * scaler)};
     
     // linking vertices mannually from cube.obj for now
     Face face0 = {v1,v2,v3};
@@ -86,18 +86,18 @@ int main(void)
         face10 = RotateXYZAxis({v3,v2,v7}, angleAlpha, angleBeta, angleGamma, fov);
         face11 = RotateXYZAxis({v4,v0,v7}, angleAlpha, angleBeta, angleGamma, fov);
 
-        DrawFace(face0, withCircles, solidTriangles, PURPLE);
-        DrawFace(face1, withCircles, solidTriangles, PURPLE);
-        DrawFace(face2, withCircles, solidTriangles, PURPLE);
-        DrawFace(face3, withCircles, solidTriangles, PURPLE);
-        DrawFace(face4, withCircles, solidTriangles, PURPLE);
-        DrawFace(face5, withCircles, solidTriangles, PURPLE);
-        DrawFace(face6, withCircles, solidTriangles, PURPLE);
-        DrawFace(face7, withCircles, solidTriangles, PURPLE);
-        DrawFace(face8, withCircles, solidTriangles, PURPLE);
-        DrawFace(face9, withCircles, solidTriangles, PURPLE);
-        DrawFace(face10, withCircles, solidTriangles, PURPLE);
-        DrawFace(face11, withCircles, solidTriangles, PURPLE);
+        DrawFace(face0, withCircles, solidTriangles, {170, 170, 0, 255});
+        DrawFace(face1, withCircles, solidTriangles, {170, 170, 170, 255});
+        DrawFace(face2, withCircles, solidTriangles, {0, 0, 170, 255});
+        DrawFace(face3, withCircles, solidTriangles, {170, 85, 0, 255});
+        DrawFace(face4, withCircles, solidTriangles, {0, 170, 0, 255});
+        DrawFace(face5, withCircles, solidTriangles, {170, 0, 0, 255});
+        DrawFace(face6, withCircles, solidTriangles, {170, 170, 0, 255});
+        DrawFace(face7, withCircles, solidTriangles, {170, 170, 170, 255});
+        DrawFace(face8, withCircles, solidTriangles, {0, 0, 170, 255});
+        DrawFace(face9, withCircles, solidTriangles, {170, 85, 0, 255});
+        DrawFace(face10, withCircles, solidTriangles, {0, 170, 0, 255});
+        DrawFace(face11, withCircles, solidTriangles, {170, 0, 0, 255});
 
         EndDrawing();
     }
