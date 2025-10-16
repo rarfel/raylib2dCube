@@ -97,7 +97,7 @@ Face RotateXYZAxis(Face face, float angleAlpha, float angleBeta, float angleGamm
 }
 
 // function that draws the face of a 3d object
-void DrawFace(Face face, bool withCircles, Color color)
+void DrawFace(Face face, bool withCircles, bool solidTriangles, Color color)
 {
     if(withCircles)
     {
@@ -106,7 +106,15 @@ void DrawFace(Face face, bool withCircles, Color color)
         DrawCircle(face.vec2.x, face.vec2.y, circleSize, color);
         DrawCircle(face.vec3.x, face.vec3.y, circleSize, color);
     }
-    DrawLine(face.vec1.x, face.vec1.y, face.vec2.x, face.vec2.y, color);
-    DrawLine(face.vec2.x, face.vec2.y, face.vec3.x, face.vec3.y, color);
-    DrawLine(face.vec3.x, face.vec3.y, face.vec1.x, face.vec1.y, color);
+    if(solidTriangles)
+    {
+        DrawTriangle({face.vec1.x, face.vec1.y}, {face.vec2.x, face.vec2.y}, {face.vec3.x, face.vec3.y}, color);
+        // DrawTriangle({face.vec3.x, face.vec3.y}, {face.vec2.x, face.vec2.y}, {face.vec1.x, face.vec1.y}, color);
+
+    }else
+    {
+        DrawLine(face.vec1.x, face.vec1.y, face.vec2.x, face.vec2.y, color);
+        DrawLine(face.vec2.x, face.vec2.y, face.vec3.x, face.vec3.y, color);
+        DrawLine(face.vec3.x, face.vec3.y, face.vec1.x, face.vec1.y, color);
+    }
 }
