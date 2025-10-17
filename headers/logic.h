@@ -1,5 +1,5 @@
-#include <iostream>
 #include <cmath>
+#include <vector>
 
 #define WIDTH 980
 #define HEIGHT 720
@@ -13,6 +13,11 @@ struct Face
     Vector3 vec1;
     Vector3 vec2;
     Vector3 vec3;
+};
+
+struct FaceIndex
+{
+    int index[3];
 };
 
 // dx = cosy(sinzY + coszX) - sinyZ
@@ -109,12 +114,25 @@ void DrawFace(Face face, bool withCircles, bool solidTriangles, Color color)
     if(solidTriangles)
     {
         DrawTriangle({face.vec1.x, face.vec1.y}, {face.vec2.x, face.vec2.y}, {face.vec3.x, face.vec3.y}, color);
-        // DrawTriangle({face.vec3.x, face.vec3.y}, {face.vec2.x, face.vec2.y}, {face.vec1.x, face.vec1.y}, color);
-
     }else
     {
         DrawLine(face.vec1.x, face.vec1.y, face.vec2.x, face.vec2.y, color);
         DrawLine(face.vec2.x, face.vec2.y, face.vec3.x, face.vec3.y, color);
         DrawLine(face.vec3.x, face.vec3.y, face.vec1.x, face.vec1.y, color);
+    }
+}
+
+//function that multiply the coordinates of a vertice by a scaler
+void ScaleVertice(std::vector<Vector3> &verticesOBJ, float scaler)
+{
+    std::vector<Vector3>::iterator it;
+    int aux = 0;
+
+    for(it = verticesOBJ.begin(); it != verticesOBJ.end(); it++)
+    {
+        verticesOBJ.at(aux).x *= scaler;
+        verticesOBJ.at(aux).y *= scaler;
+        verticesOBJ.at(aux).z *= scaler;
+        aux++;
     }
 }

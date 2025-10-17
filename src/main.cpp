@@ -7,32 +7,15 @@ int main(void)
     InitWindow(WIDTH, HEIGHT, "3d Objects");
     
     std::vector<Vector3> verticesOBJ;
+    std::vector<FaceIndex> facesOBJ;
+    std::vector<FaceIndex>::iterator iteratorfacesOBJ;
 
-    //taking values mannually from cube.obj for now
     float scaler = 100;
-    verticesOBJ = ReadOBJFile("res/cube.obj");
-    Vector3 v0 = {(verticesOBJ[0].x * scaler),(verticesOBJ[0].y * scaler),(verticesOBJ[0].z * scaler)};
-    Vector3 v1 = {(verticesOBJ[1].x * scaler),(verticesOBJ[1].y * scaler),(verticesOBJ[1].z * scaler)};
-    Vector3 v2 = {(verticesOBJ[2].x * scaler),(verticesOBJ[2].y * scaler),(verticesOBJ[2].z * scaler)};
-    Vector3 v3 = {(verticesOBJ[3].x * scaler),(verticesOBJ[3].y * scaler),(verticesOBJ[3].z * scaler)};
-    Vector3 v4 = {(verticesOBJ[4].x * scaler),(verticesOBJ[4].y * scaler),(verticesOBJ[4].z * scaler)};
-    Vector3 v5 = {(verticesOBJ[5].x * scaler),(verticesOBJ[5].y * scaler),(verticesOBJ[5].z * scaler)};
-    Vector3 v6 = {(verticesOBJ[6].x * scaler),(verticesOBJ[6].y * scaler),(verticesOBJ[6].z * scaler)};
-    Vector3 v7 = {(verticesOBJ[7].x * scaler),(verticesOBJ[7].y * scaler),(verticesOBJ[7].z * scaler)};
-    
-    // linking vertices mannually from cube.obj for now
-    Face face0 = {v1,v2,v3};
-    Face face1 = {v7,v6,v5};
-    Face face2 = {v4,v5,v1};
-    Face face3 = {v5,v6,v2};
-    Face face4 = {v2,v6,v7};
-    Face face5 = {v0,v3,v7};
-    Face face6 = {v0,v1,v3};
-    Face face7 = {v4,v7,v5};
-    Face face8 = {v0,v4,v1};
-    Face face9 = {v1,v5,v2};
-    Face face10 = {v3,v2,v7};
-    Face face11 = {v4,v0,v7};
+
+    //grabbing vertices values and the link between then
+    ReadOBJFile("res/cube.obj", verticesOBJ, facesOBJ);
+    //scaling values by a scaler because the raw values are [-1 < value < 1]
+    ScaleVertice(verticesOBJ, scaler);
 
     int fov = 1000;
 
@@ -72,32 +55,13 @@ int main(void)
 
         BeginDrawing();
         ClearBackground(BLACK);
-
-        face0 = RotateXYZAxis({v1,v2,v3}, angleAlpha, angleBeta, angleGamma, fov);
-        face1 = RotateXYZAxis({v7,v6,v5}, angleAlpha, angleBeta, angleGamma, fov);
-        face2 = RotateXYZAxis({v4,v5,v1}, angleAlpha, angleBeta, angleGamma, fov);
-        face3 = RotateXYZAxis({v5,v6,v2}, angleAlpha, angleBeta, angleGamma, fov);
-        face4 = RotateXYZAxis({v2,v6,v7}, angleAlpha, angleBeta, angleGamma, fov);
-        face5 = RotateXYZAxis({v0,v3,v7}, angleAlpha, angleBeta, angleGamma, fov);
-        face6 = RotateXYZAxis({v0,v1,v3}, angleAlpha, angleBeta, angleGamma, fov);
-        face7 = RotateXYZAxis({v4,v7,v5}, angleAlpha, angleBeta, angleGamma, fov);
-        face8 = RotateXYZAxis({v0,v4,v1}, angleAlpha, angleBeta, angleGamma, fov);
-        face9 = RotateXYZAxis({v1,v5,v2}, angleAlpha, angleBeta, angleGamma, fov);
-        face10 = RotateXYZAxis({v3,v2,v7}, angleAlpha, angleBeta, angleGamma, fov);
-        face11 = RotateXYZAxis({v4,v0,v7}, angleAlpha, angleBeta, angleGamma, fov);
-
-        DrawFace(face0, withCircles, solidTriangles, PURPLE);
-        DrawFace(face1, withCircles, solidTriangles, PURPLE);
-        DrawFace(face2, withCircles, solidTriangles, PURPLE);
-        DrawFace(face3, withCircles, solidTriangles, PURPLE);
-        DrawFace(face4, withCircles, solidTriangles, PURPLE);
-        DrawFace(face5, withCircles, solidTriangles, PURPLE);
-        DrawFace(face6, withCircles, solidTriangles, PURPLE);
-        DrawFace(face7, withCircles, solidTriangles, PURPLE);
-        DrawFace(face8, withCircles, solidTriangles, PURPLE);
-        DrawFace(face9, withCircles, solidTriangles, PURPLE);
-        DrawFace(face10, withCircles, solidTriangles, PURPLE);
-        DrawFace(face11, withCircles, solidTriangles, PURPLE);
+        for(iteratorfacesOBJ = facesOBJ.begin(); iteratorfacesOBJ != facesOBJ.end(); iteratorfacesOBJ++)
+        {
+            Face face = {verticesOBJ.at(iteratorfacesOBJ->index[0]), verticesOBJ.at(iteratorfacesOBJ->index[1]), verticesOBJ.at(iteratorfacesOBJ->index[2])};
+            Face nface = {face.vec1,face.vec2,face.vec3};
+            face = RotateXYZAxis(nface, angleAlpha, angleBeta, angleGamma, fov);
+            DrawFace(face, withCircles, solidTriangles, {(unsigned char)(int(face.vec3.x)%255), (unsigned char)(int(face.vec2.y)%255), (unsigned char)(int(face.vec1.z)%255), 255});
+        }
 
         EndDrawing();
     }
