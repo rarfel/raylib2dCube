@@ -27,11 +27,13 @@ size_t SplitStrings(const std::string &txt, std::vector<std::string> &strs, char
 }
 
 //Splitting the coordinates and separanting it by "vertices"
-void CheckVertices(std::vector<std::string> &variables, std::vector<Vector3> &verticesOBJ)
+void CheckVertices(std::string &fileContent, std::vector<std::string> &variables, std::vector<Vector3> &verticesOBJ)
 {
     const int triangleVertices = 3;
     float vertices[triangleVertices];
     int index = 0;
+
+    SplitStrings(fileContent, variables, ' ');
 
     for(std::string iter : variables)
         if(iter.at(0) != 'v')
@@ -50,29 +52,47 @@ void CheckVertices(std::vector<std::string> &variables, std::vector<Vector3> &ve
 }
 
 //Splitting the edges and separanting it by "faces"
-void CheckEdges(std::vector<std::string> &variables, std::vector<FaceIndex> &facesOBJ)
+void CheckEdges(std::string &fileContent, std::vector<std::string> &variables, std::vector<FaceIndex> &facesOBJ)
 {
-    const int triangleVertices = 4;
     int index = 0;
-    /* removing 48 from the result because ascii puts 48 as the code of 0. And removing 1 because the .obj file starts from 1 instead of 0.
-    the ascii table: https://en.wikipedia.org/wiki/ASCII#Printable_character_table */
-    const int asciiConversion = 49;
+    int spaceCounter = 0;
+    /* Removing 1 because the .obj file starts from 1 instead of 0.*/
+    const int objConversion = 1;
     FaceIndex facesIndex;
+    std::string faceLinks;
 
+    SplitStrings(fileContent, variables, 'f');
+    
     for(std::string iter : variables)
-        if(iter.at(0) != 'f')
+    {
+        for(auto it : iter)
         {
-            if(index < triangleVertices)
+            if(it == ' '){spaceCounter++;}
+        }
+        if(spaceCounter != 0)
+        {
+            SplitStrings(fileContent, variables, ' ');
+            for(auto link : variables)
             {
-                facesIndex.index[index] = int(iter.at(0)) - asciiConversion;
-                index++;
-            }
-            if(index == triangleVertices)
-            {
-                facesOBJ.push_back(facesIndex);
-                index = 0;
+                if(link.at(0) != 'f')
+                {
+                    if(index < spaceCounter)
+                    {
+                        for(int i = 0; i < link.find('/'); i++)
+                        {faceLinks += link.at(i);}
+                        facesIndex.index[index] = std::stoi(faceLinks) - objConversion;
+                        faceLinks = "";
+                        index++;
+                    }
+                    if(index == spaceCounter)
+                    {
+                        facesOBJ.push_back(facesIndex);
+                        index = 0;
+                    }
+                }
             }
         }
+    }
 }
 
 // function that gets a .obj file and extracts its vertices and faces
@@ -86,15 +106,13 @@ void ReadOBJFile(std::string filepath, std::vector<Vector3> &verticesOBJ, std::v
 
     while (std::getline(readFile, fileContent))
     {
-        SplitStrings(fileContent, variables, ' ');
-
-        // Identifying if its reading the vertices
+       // Identifying if its reading the vertices
         if(fileContent[0] == 'v' and fileContent[1] == ' ')
-            CheckVertices(variables, verticesOBJ);
+        {CheckVertices(fileContent, variables, verticesOBJ);}
 
         // Identifying if its reading the faces
         if(fileContent[0] == 'f')
-            CheckEdges(variables, facesOBJ);
+        {CheckEdges(fileContent, variables, facesOBJ);}
     }
 
     // Close the file

@@ -10,15 +10,15 @@
 // A face is defined by 3 vertices
 struct Face
 {
-    Vector3 vec1;
-    Vector3 vec2;
-    Vector3 vec3;
-    Vector3 vec4;
+    Vector3 vec1 = {0,0,0};
+    Vector3 vec2 = {0,0,0};
+    Vector3 vec3 = {0,0,0};
+    Vector3 vec4 = {0,0,0};
 };
 
 struct FaceIndex
 {
-    int index[4];
+    int index[4] = {0,0,0,0};
 };
 
 // dx = cosy(sinzY + coszX) - sinyZ
@@ -122,6 +122,7 @@ void DrawFace(Face face, bool withCircles, bool solidTriangles, Color color)
     if(solidTriangles)
     {
         DrawTriangle({face.vec1.x, face.vec1.y}, {face.vec2.x, face.vec2.y}, {face.vec3.x, face.vec3.y}, color);
+        if(face.vec4.x != 0 and face.vec4.y != 0 and face.vec4.z != 0)
         DrawTriangle({face.vec1.x, face.vec1.y}, {face.vec3.x, face.vec3.y}, {face.vec4.x, face.vec4.y}, color);
     }else
     {
@@ -129,9 +130,12 @@ void DrawFace(Face face, bool withCircles, bool solidTriangles, Color color)
         DrawLine(face.vec2.x, face.vec2.y, face.vec3.x, face.vec3.y, color);
         DrawLine(face.vec3.x, face.vec3.y, face.vec1.x, face.vec1.y, color);
 
-        DrawLine(face.vec1.x, face.vec1.y, face.vec3.x, face.vec3.y, color);
-        DrawLine(face.vec3.x, face.vec3.y, face.vec4.x, face.vec4.y, color);
-        DrawLine(face.vec4.x, face.vec4.y, face.vec1.x, face.vec1.y, color);
+        if(face.vec4.x != 0 and face.vec4.y != 0 and face.vec4.z != 0)
+        {   
+            DrawLine(face.vec1.x, face.vec1.y, face.vec3.x, face.vec3.y, color);
+            DrawLine(face.vec3.x, face.vec3.y, face.vec4.x, face.vec4.y, color);
+            DrawLine(face.vec4.x, face.vec4.y, face.vec1.x, face.vec1.y, color);
+        }
     }
 }
 
