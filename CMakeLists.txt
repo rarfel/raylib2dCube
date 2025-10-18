@@ -8,4 +8,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(headers)
 add_subdirectory(raylib)
+add_subdirectory(res)
 add_subdirectory(src)
