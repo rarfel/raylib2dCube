@@ -1,22 +1,29 @@
 #include "raylib.h"
-
-#define WIDTH 980
-#define HEIGHT 720
+#include "../headers/logic.h"
 
 int main(void)
 {
-    const int squareSize = 1;
     InitWindow(WIDTH, HEIGHT, "Creating colored grid");
+    Vector3 vec1 = {HALF_WIDTH - 100, HALF_HEIGHT - 100, 100};
+    Vector3 vec2 = {HALF_WIDTH + 100, HALF_HEIGHT - 100, 100};
+    Vector3 vec3 = {HALF_WIDTH - 150, HALF_HEIGHT - 200, 100};
+    Vector3 vec4 = {HALF_WIDTH - 150, HALF_HEIGHT + 200, 100};
+
+    Vector3 vec5 = {HALF_WIDTH - 200, HALF_HEIGHT - 300, 100};
+    Vector3 vec6 = {HALF_WIDTH + 300, HALF_HEIGHT - 100, 100};
+    Vector3 vec7 = {HALF_WIDTH - 250, HALF_HEIGHT - 500, 100};
+    Vector3 vec8 = {HALF_WIDTH - 150, HALF_HEIGHT + 200, 100};
 
     while (!WindowShouldClose())
     {
+        SetTargetFPS(60);
+
         BeginDrawing();
         ClearBackground(BLACK);
-        for(int i = 0; i < WIDTH; i++)
-            for(int j = 0; j < HEIGHT; j++)
-                //The rgba values are stored in unsigned char, so converting is a must
-                DrawPixel(i, j, {(unsigned char)(int((i*squareSize)/(3.85))%255), (unsigned char)(int((j*squareSize)/(2.85))%255), 0, 255});
-            
+
+        DrawFace(vec1, vec2, vec3, vec4);
+        DrawFace(vec5, vec6, vec7, vec8);
+
         EndDrawing();
     }
 
