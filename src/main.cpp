@@ -55,6 +55,7 @@ int main(void)
 
         BeginDrawing();
         ClearBackground(BLACK);
+
         for(iteratorfacesOBJ = facesOBJ.begin(); iteratorfacesOBJ != facesOBJ.end(); iteratorfacesOBJ++)
         {
             Color funkyColor = {(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[0]).x)%255),(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[0]).y)%255),(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[0]).z)%255),255};
