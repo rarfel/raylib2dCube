@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fstream>
+#include <iostream>
 #include <vector>
 
 /* A split function, the original can be found here https://ideone.com/1RCZM8*/
@@ -51,7 +52,7 @@ void CheckVertices(std::vector<std::string> &variables, std::vector<Vector3> &ve
 //Splitting the edges and separanting it by "faces"
 void CheckEdges(std::vector<std::string> &variables, std::vector<FaceIndex> &facesOBJ)
 {
-    const int triangleVertices = 3;
+    const int triangleVertices = 4;
     int index = 0;
     /* removing 48 from the result because ascii puts 48 as the code of 0. And removing 1 because the .obj file starts from 1 instead of 0.
     the ascii table: https://en.wikipedia.org/wiki/ASCII#Printable_character_table */

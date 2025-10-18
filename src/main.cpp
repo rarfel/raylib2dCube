@@ -57,8 +57,8 @@ int main(void)
         ClearBackground(BLACK);
         for(iteratorfacesOBJ = facesOBJ.begin(); iteratorfacesOBJ != facesOBJ.end(); iteratorfacesOBJ++)
         {
-            Face face = {verticesOBJ.at(iteratorfacesOBJ->index[0]), verticesOBJ.at(iteratorfacesOBJ->index[1]), verticesOBJ.at(iteratorfacesOBJ->index[2])};
-            Face nface = {face.vec1,face.vec2,face.vec3};
+            Face face = {verticesOBJ.at(iteratorfacesOBJ->index[0]), verticesOBJ.at(iteratorfacesOBJ->index[1]), verticesOBJ.at(iteratorfacesOBJ->index[2]),verticesOBJ.at(iteratorfacesOBJ->index[3])};
+            Face nface = {face.vec1, face.vec2, face.vec3, face.vec4};
             face = RotateXYZAxis(nface, angleAlpha, angleBeta, angleGamma, fov);
             DrawFace(face, withCircles, solidTriangles, {(unsigned char)(int(face.vec3.x)%255), (unsigned char)(int(face.vec2.y)%255), (unsigned char)(int(face.vec1.z)%255), 255});
         }
