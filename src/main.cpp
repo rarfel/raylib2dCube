@@ -15,7 +15,7 @@ int main(void)
         for(int i = 0; i < WIDTH; i++)
             for(int j = 0; j < HEIGHT; j++)
                 //The rgba values are stored in unsigned char, so converting is a must
-                DrawRectangle(i*squareSize, j*squareSize, squareSize, squareSize, {(unsigned char)(int((i*squareSize)/(3.85))%255), (unsigned char)(int((j*squareSize)/(2.85))%255), 0, 255});
+                DrawPixel(i, j, {(unsigned char)(int((i*squareSize)/(3.85))%255), (unsigned char)(int((j*squareSize)/(2.85))%255), 0, 255});
             
         EndDrawing();
     }
