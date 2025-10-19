@@ -1,7 +1,6 @@
 #pragma once
 
 #include <fstream>
-#include <iostream>
 #include <vector>
 
 /* A split function, the original can be found here https://ideone.com/1RCZM8*/

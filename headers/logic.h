@@ -2,6 +2,8 @@
 
 #include <cmath>
 #include <vector>
+#include <iostream>
+#include <random>
 
 #define WIDTH 980
 #define HEIGHT 720
@@ -65,20 +67,20 @@ float RotateZAxis(Vector3 &vec, float angleAlpha, float angleBeta, float angleGa
 }
 
 // projected = (x or y) * fov / z + fov
-Face ProjectedCoordinates(Face &face, float fov)
+Face ProjectedCoordinates(Face &face, float fov, float scaler)
 {
     Face projectedFace;
     //subtracting the result from half the screen width/Height to centralize object
 
-    projectedFace.vec1.x = HALF_WIDTH - ((face.vec1.x * fov) / (face.vec1.z + fov));
-    projectedFace.vec2.x = HALF_WIDTH - ((face.vec2.x * fov) / (face.vec2.z + fov));
-    projectedFace.vec3.x = HALF_WIDTH - ((face.vec3.x * fov) / (face.vec3.z + fov));
-    projectedFace.vec4.x = HALF_WIDTH - ((face.vec4.x * fov) / (face.vec4.z + fov));
+    projectedFace.vec1.x = HALF_WIDTH - ((face.vec1.x * fov) /  (face.vec1.z + fov));
+    projectedFace.vec2.x = HALF_WIDTH - ((face.vec2.x * fov) /  (face.vec2.z + fov));
+    projectedFace.vec3.x = HALF_WIDTH - ((face.vec3.x * fov) /  (face.vec3.z + fov));
+    projectedFace.vec4.x = HALF_WIDTH - ((face.vec4.x * fov) /  (face.vec4.z + fov));
 
-    projectedFace.vec1.y = HALF_HEIGHT - ((face.vec1.y * fov) / (face.vec1.z + fov));
-    projectedFace.vec2.y = HALF_HEIGHT - ((face.vec2.y * fov) / (face.vec2.z + fov));
-    projectedFace.vec3.y = HALF_HEIGHT - ((face.vec3.y * fov) / (face.vec3.z + fov));
-    projectedFace.vec4.y = HALF_HEIGHT - ((face.vec4.y * fov) / (face.vec4.z + fov));
+    projectedFace.vec1.y = HALF_HEIGHT - ((face.vec1.y * fov) /  (face.vec1.z + fov));
+    projectedFace.vec2.y = HALF_HEIGHT - ((face.vec2.y * fov) /  (face.vec2.z + fov));
+    projectedFace.vec3.y = HALF_HEIGHT - ((face.vec3.y * fov) /  (face.vec3.z + fov));
+    projectedFace.vec4.y = HALF_HEIGHT - ((face.vec4.y * fov) /  (face.vec4.z + fov));
 
     projectedFace.vec1.z = face.vec1.z;
     projectedFace.vec2.z = face.vec2.z;
@@ -89,7 +91,7 @@ Face ProjectedCoordinates(Face &face, float fov)
 }
 
 // Rotates the points in all axis using the mathematical formula: https://en.wikipedia.org/wiki/3D_projection#Mathematical_formula
-Face RotateXYZAxis(Face &face, float angleAlpha, float angleBeta, float angleGamma, float fov)
+Face RotateXYZAxis(Face face, float angleAlpha, float angleBeta, float angleGamma, float fov, float scaler)
 {
     Face nFace;
     
@@ -112,7 +114,7 @@ Face RotateXYZAxis(Face &face, float angleAlpha, float angleBeta, float angleGam
         nFace.vec4.z = RotateZAxis(face.vec4,angleAlpha,angleBeta,angleGamma);
     }
 
-    return ProjectedCoordinates(nFace, fov);
+    return ProjectedCoordinates(nFace, fov, scaler);
 }
 
 // Using the same function at Sebastian Lague Rasterizer git repo: https://github.com/SebLague/Software-Rasterizer/blob/main/Source/Core/Helpers/Maths.cs
@@ -126,7 +128,7 @@ bool TestIfFaceValid(Vector3 &v1, Vector3 &v2, Vector3 &v3, Vector3 point)
     float edge1 = TestIfInside(v1, v2, point);
     float edge2 = TestIfInside(v2, v3, point);
     float edge3 = TestIfInside(v3, v1, point);
-    bool inTriangle = edge1 >= 0 and edge2 >= 0 and edge3 >= 0;
+    bool inTriangle = (edge1 >= 0 and edge2 >= 0 and edge3 >= 0);
 
     float totalArea = (edge1 + edge2 + edge3);
     float invAreaSum = 1 / totalArea;
@@ -134,7 +136,7 @@ bool TestIfFaceValid(Vector3 &v1, Vector3 &v2, Vector3 &v3, Vector3 point)
     return inTriangle && totalArea > 0;
 }
 
-void DrawFaceTriangle(Vector3 &v1, Vector3 &v2, Vector3 &v3, Color color)
+void DrawFaceTriangle(Vector3 &v1, Vector3 &v2, Vector3 &v3, Color &color)
 {
     const float minX = std::min(std::min(v1.x, v2.x), v3.x);
     const float maxX = std::max(std::max(v1.x, v2.x), v3.x);
@@ -146,49 +148,71 @@ void DrawFaceTriangle(Vector3 &v1, Vector3 &v2, Vector3 &v3, Color color)
     {
         for(float j = minY; j < maxY; j++)
         {
-            bool face1 = TestIfFaceValid(v1,v2,v3,{i,j,0});
-            if(face1)
-            DrawPixel(i, j, color);
+            bool face = TestIfFaceValid(v1,v2,v3,{i,j,0});
+            if(face)
+                DrawPixel(i, j, color);
         }
     }
 }
 
-// function that draws the face of a 3d object
-void DrawFace(Face face, bool withCircles, bool solidTriangles, Color color)
+Color VectorToColor(Vector3 &vec, float scaler)
 {
-    if(withCircles)
-    {
-        int circleSize = 5;
-        DrawCircle(face.vec1.x, face.vec1.y, circleSize, color);
-        DrawCircle(face.vec2.x, face.vec2.y, circleSize, color);
-        DrawCircle(face.vec3.x, face.vec3.y, circleSize, color);
-        DrawCircle(face.vec4.x, face.vec4.y, circleSize, color);
-    }
-    if(solidTriangles)
-    {    
-        if((face.vec4.x != -1 and face.vec4.y != -1 and face.vec4.z != -1))
+    return {(unsigned char)((int)(vec.x*scaler)%255), (unsigned char)((int)(vec.y*scaler)%255), (unsigned char)((int)(vec.z*scaler)%255), 255};
+}
+
+// function that draws the face of a 3d object
+void DrawFace(Face face, bool withCircles, bool solidTriangles, float fov, float scaler)
+{
+    float distX = 0;
+    float distY = 0;
+    float distZ = 0;
+
+    distX += (face.vec1.x * fov) / (face.vec1.z + fov);
+    distY += (face.vec1.y * fov) / (face.vec1.z + fov);
+    distZ += face.vec1.z;
+
+    distX += (face.vec2.x * fov) / (face.vec2.z + fov);
+    distY += (face.vec2.y * fov) / (face.vec2.z + fov);
+    distZ += face.vec2.z;
+
+    distX += (face.vec3.x * fov) / (face.vec3.z + fov);
+    distY += (face.vec3.y * fov) / (face.vec3.z + fov);
+    distZ += face.vec3.z;
+
+    distX += (face.vec4.x * fov) / (face.vec4.z + fov);
+    distY += (face.vec4.y * fov) / (face.vec4.z + fov);
+    distZ += face.vec4.z;
+
+    Vector3 dist = {distX, distY, distZ};
+
+        Color color = VectorToColor(dist, scaler);
+        if(withCircles)
         {
+            int circleSize = 5;
+            DrawCircle(face.vec1.x, face.vec1.y, circleSize, color);
+            DrawCircle(face.vec2.x, face.vec2.y, circleSize, color);
+            DrawCircle(face.vec3.x, face.vec3.y, circleSize, color);
+            DrawCircle(face.vec4.x, face.vec4.y, circleSize, color);
+        }
+        if(solidTriangles)
+        {    
             DrawFaceTriangle(face.vec1, face.vec2, face.vec3, color);
+            if((face.vec4.x != -1 and face.vec4.y != -1 and face.vec4.z != -1))
             DrawFaceTriangle(face.vec1, face.vec3, face.vec4, color);
         }
         else
         {
-            DrawFaceTriangle(face.vec1, face.vec2, face.vec3, color);
+            DrawLine(face.vec1.x, face.vec1.y, face.vec2.x, face.vec2.y, color);
+            DrawLine(face.vec2.x, face.vec2.y, face.vec3.x, face.vec3.y, color);
+            DrawLine(face.vec3.x, face.vec3.y, face.vec1.x, face.vec1.y, color);
+            
+            if(face.vec4.x != -1 and face.vec4.y != -1 and face.vec4.z != -1)
+            {   
+                DrawLine(face.vec1.x, face.vec1.y, face.vec3.x, face.vec3.y, color);
+                DrawLine(face.vec3.x, face.vec3.y, face.vec4.x, face.vec4.y, color);
+                DrawLine(face.vec4.x, face.vec4.y, face.vec1.x, face.vec1.y, color);
+            }
         }
-    }
-    else
-    {
-        DrawLine(face.vec1.x, face.vec1.y, face.vec2.x, face.vec2.y, color);
-        DrawLine(face.vec2.x, face.vec2.y, face.vec3.x, face.vec3.y, color);
-        DrawLine(face.vec3.x, face.vec3.y, face.vec1.x, face.vec1.y, color);
-
-        if(face.vec4.x != -1 and face.vec4.y != -1 and face.vec4.z != -1)
-        {   
-            DrawLine(face.vec1.x, face.vec1.y, face.vec3.x, face.vec3.y, color);
-            DrawLine(face.vec3.x, face.vec3.y, face.vec4.x, face.vec4.y, color);
-            DrawLine(face.vec4.x, face.vec4.y, face.vec1.x, face.vec1.y, color);
-        }
-    }
 }
 
 //function that multiply the coordinates of a vertice by a scaler

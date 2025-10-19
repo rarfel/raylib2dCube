@@ -9,6 +9,7 @@ int main(void)
     std::vector<Vector3> verticesOBJ;
     std::vector<FaceIndex> facesOBJ;
     std::vector<FaceIndex>::iterator iteratorfacesOBJ;
+    std::vector<Face> faces;
 
     float scaler = 100;
 
@@ -17,7 +18,7 @@ int main(void)
     //scaling values by a scaler because the raw values are [-1 < value < 1]
     ScaleVertice(verticesOBJ, scaler);
 
-    int fov = 1000;
+    float fov = 1000;
 
     bool withCircles = false;
     bool solidTriangles = false;
@@ -28,6 +29,15 @@ int main(void)
 
     // how much the angle change each iteration
     const float angleChange = 0.01;
+
+    //linking the vertices in the correspondent faces
+    for(iteratorfacesOBJ = facesOBJ.begin(); iteratorfacesOBJ != facesOBJ.end(); iteratorfacesOBJ++)
+    {
+        if(iteratorfacesOBJ->index[3] != -1)
+            faces.push_back({verticesOBJ.at(iteratorfacesOBJ->index[0]), verticesOBJ.at(iteratorfacesOBJ->index[1]), verticesOBJ.at(iteratorfacesOBJ->index[2]),verticesOBJ.at(iteratorfacesOBJ->index[3])});
+        else
+            faces.push_back({verticesOBJ.at(iteratorfacesOBJ->index[0]), verticesOBJ.at(iteratorfacesOBJ->index[1]), verticesOBJ.at(iteratorfacesOBJ->index[2])});
+    }
 
     while (!WindowShouldClose())
     {
@@ -54,25 +64,11 @@ int main(void)
         SetTargetFPS(60);
 
         BeginDrawing();
-        ClearBackground(BLACK);
+        ClearBackground(BLACK);       
 
-        for(iteratorfacesOBJ = facesOBJ.begin(); iteratorfacesOBJ != facesOBJ.end(); iteratorfacesOBJ++)
+        for(auto it = faces.begin(); it != faces.end(); it++)
         {
-            Color funkyColor = {(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[2]).x)%255),(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[1]).y)%255),(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[0]).z)%255),255};
-            if(iteratorfacesOBJ->index[3] != -1)
-            {
-                Face face = {verticesOBJ.at(iteratorfacesOBJ->index[0]), verticesOBJ.at(iteratorfacesOBJ->index[1]), verticesOBJ.at(iteratorfacesOBJ->index[2]),verticesOBJ.at(iteratorfacesOBJ->index[3])};
-                Face nface = {face.vec1, face.vec2, face.vec3, face.vec4};
-                face = RotateXYZAxis(nface, angleAlpha, angleBeta, angleGamma, fov);
-                DrawFace(face, withCircles, solidTriangles, funkyColor);
-            }
-            else
-            {
-                Face face = {verticesOBJ.at(iteratorfacesOBJ->index[0]), verticesOBJ.at(iteratorfacesOBJ->index[1]), verticesOBJ.at(iteratorfacesOBJ->index[2])};
-                Face nface = {face.vec1, face.vec2, face.vec3, face.vec4};
-                face = RotateXYZAxis(nface, angleAlpha, angleBeta, angleGamma, fov);
-                DrawFace(face, withCircles, solidTriangles, funkyColor);
-            }
+            DrawFace(RotateXYZAxis(*it, angleAlpha, angleBeta, angleGamma, fov, scaler), withCircles, solidTriangles, fov, scaler);
         }
 
         EndDrawing();
