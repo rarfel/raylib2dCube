@@ -13,7 +13,7 @@ int main(void)
     float scaler = 100;
 
     //grabbing vertices values and the link between then
-    ReadOBJFile("res/Bola.obj", verticesOBJ, facesOBJ);
+    ReadOBJFile("res/cube.obj", verticesOBJ, facesOBJ);
     //scaling values by a scaler because the raw values are [-1 < value < 1]
     ScaleVertice(verticesOBJ, scaler);
 
@@ -58,8 +58,8 @@ int main(void)
 
         for(iteratorfacesOBJ = facesOBJ.begin(); iteratorfacesOBJ != facesOBJ.end(); iteratorfacesOBJ++)
         {
-            Color funkyColor = {(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[0]).x)%255),(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[0]).y)%255),(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[0]).z)%255),255};
-            if(iteratorfacesOBJ->index[3] != 0)
+            Color funkyColor = {(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[2]).x)%255),(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[1]).y)%255),(unsigned char)(int(verticesOBJ.at(iteratorfacesOBJ->index[0]).z)%255),255};
+            if(iteratorfacesOBJ->index[3] != -1)
             {
                 Face face = {verticesOBJ.at(iteratorfacesOBJ->index[0]), verticesOBJ.at(iteratorfacesOBJ->index[1]), verticesOBJ.at(iteratorfacesOBJ->index[2]),verticesOBJ.at(iteratorfacesOBJ->index[3])};
                 Face nface = {face.vec1, face.vec2, face.vec3, face.vec4};
